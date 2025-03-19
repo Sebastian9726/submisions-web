@@ -1,0 +1,118 @@
+.container {
+  padding: 20px;
+  max-width: 100%;
+  background-color: #f5f5f5;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 24px;
+  color: #333;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  padding-left: 10px;
+}
+
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.top-row, .middle-row, .bottom-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.form-select, .date-select {
+  width: 100%;
+  max-width: 450px;
+}
+
+.middle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-box {
+  width: 400px;
+}
+
+.status-select {
+  width: 200px;
+}
+
+.controls-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.map-list-toggle {
+  display: flex;
+  background-color: #eeeeee;
+  border-radius: 4px;
+  overflow: hidden;
+  
+  button {
+    border: none;
+    background: none;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    &.active {
+      background-color: #ddd;
+      font-weight: 500;
+    }
+  }
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.export-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #3f51b5;
+  color: white;
+  padding: 0 20px;
+  height: 40px;
+}
+
+.view-container {
+  height: calc(100vh - 300px);
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.map-view {
+  height: 100%;
+}
+
+.list-view {
+  height: 100%;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .middle-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .search-box, .status-select, .controls-container {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}

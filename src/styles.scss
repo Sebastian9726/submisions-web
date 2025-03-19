@@ -1,0 +1,125 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+html, body { 
+  height: 100%; 
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #f5f5f5;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* For Leaflet map */
+@import 'leaflet/dist/leaflet.css';
+
+.header-bar {
+  background-color: #2196F3;
+  color: white;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.menu-items {
+  display: flex;
+  gap: 24px;
+}
+
+.menu-item {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+  }
+  
+  &:hover {
+    opacity: 1;
+  }
+  
+  &.active {
+    font-weight: 500;
+    opacity: 1;
+    position: relative;
+    
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: -18px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background-color: white;
+      border-radius: 3px;
+    }
+  }
+}
+
+.header-controls {
+  display: flex;
+  gap: 8px;
+  
+  .mat-icon-button {
+    color: white;
+  }
+}
+
+.status-incomplete {
+  background-color: #ff9800;
+  color: white;
+}
+
+.status-low-risk {
+  background-color: #4caf50;
+  color: white;
+}
+
+.status-needs-review {
+  background-color: #ff9800;
+  color: white;
+}
+
+/* Angular Material Customizations */
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: rgba(0, 0, 0, 0.12);
+}
+
+.mat-form-field-appearance-outline .mat-form-field-infix {
+  padding: 0.5em 0;
+}
+
+/* Map marker styles */
+.marker-cluster {
+  background-color: rgba(33, 150, 243, 0.6);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
