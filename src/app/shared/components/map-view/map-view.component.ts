@@ -39,7 +39,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   };
   @Input() mapOptions: L.MapOptions = {
-    center: [43.65, -79.38], // Toronto coordinates
+    center: [51.5074, -0.1278], // London coordinates
     zoom: 12
   };
   @Input() tileLayerUrl: string = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
