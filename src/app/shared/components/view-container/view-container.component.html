@@ -1,0 +1,12 @@
+<div class="view-container" 
+     [ngClass]="{'map-view': isMapView, 'list-view': isListView}" 
+     [class]="customClass"
+     [ngStyle]="{'height': viewHeight}">
+  <ng-container *ngIf="isMapView && mapViewTemplate">
+    <ng-container *ngTemplateOutlet="mapViewTemplate"></ng-container>
+  </ng-container>
+  
+  <ng-container *ngIf="isListView && listViewTemplate">
+    <ng-container *ngTemplateOutlet="listViewTemplate"></ng-container>
+  </ng-container>
+</div>

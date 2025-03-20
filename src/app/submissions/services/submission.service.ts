@@ -18,8 +18,8 @@ export class SubmissionService {
    */
   private generateMockData(count: number): Submission[] {
     const submissions: Submission[] = [];
-    const statuses: ('Incomplete' | 'Low Risk' | 'Needs Review' | 'Complete')[] = [
-      'Incomplete', 'Low Risk', 'Needs Review', 'Complete'
+    const statuses: ('Incomplete' | 'Low Risk' | 'Needs Review' | 'Complete' | 'Unassigned')[] = [
+      'Incomplete', 'Low Risk', 'Needs Review', 'Complete', 'Unassigned'
     ];
     
     const workFlowTypes = [
@@ -104,6 +104,21 @@ export class SubmissionService {
           match = false;
         }
         
+        if (filters.search) {
+          const searchText = filters.search.toLowerCase();
+          const searchMatch = 
+            submission.task.toLowerCase().includes(searchText) ||
+            submission.status.toLowerCase().includes(searchText) ||
+            submission.from.toLowerCase().includes(searchText) ||
+            submission.to.toLowerCase().includes(searchText) ||
+            submission.customerAddress.toLowerCase().includes(searchText) ||
+            submission.dueDate.toLowerCase().includes(searchText);
+          
+          if (!searchMatch) {
+            match = false;
+          }
+        }
+        
         return match;
       });
       
@@ -123,6 +138,6 @@ export class SubmissionService {
   }
 
   getStatusOptions(): string[] {
-    return ['All Status', 'Incomplete', 'Low Risk', 'Needs Review', 'Complete'];
+    return ['All Status', 'Incomplete', 'Low Risk', 'Needs Review', 'Complete', 'Unassigned'];
   }
 }

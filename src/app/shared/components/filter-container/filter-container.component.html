@@ -1,0 +1,50 @@
+<div class="filter-container">
+  <h1 *ngIf="title">{{ title }}</h1>
+
+  <div class="filter-content">
+    <div class="filter-inputs">
+      <div class="search-box" *ngIf="config.showSearch">
+        <mat-form-field appearance="outline">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput placeholder="Search..." [(ngModel)]="searchText" (ngModelChange)="onFilterChange()">
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline" class="form-select" *ngIf="config.showFormSelect">
+        <mat-select placeholder="Select Form" [(ngModel)]="selectedForm" (ngModelChange)="onFilterChange()">
+          <mat-option *ngFor="let form of formOptions" [value]="form">{{ form }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="status-select" *ngIf="config.showStatusSelect">
+        <mat-select placeholder="Select Status" [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()">
+          <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="date-select" *ngIf="config.showDatePicker">
+        <input matInput [matDatepicker]="picker" placeholder="Select Date" [(ngModel)]="selectedDate" (ngModelChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="controls-container">
+      <mat-button-toggle-group *ngIf="config.showViewToggle" 
+                              [value]="currentView"
+                              (change)="onViewChange($event.value)"
+                              aria-label="View options"
+                              [hideSingleSelectionIndicator]="true"
+                              >
+        <mat-button-toggle value="map">
+          <span>Map</span>
+        </mat-button-toggle>
+        <mat-button-toggle value="list">
+          <span>List</span>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+      
+      <button *ngIf="config.showExport" class="export-button" (click)="onExportClick()">
+        <mat-icon>file_download</mat-icon>
+        <span>Export</span>
+      </button>
+    </div>
+  </div>
+</div>

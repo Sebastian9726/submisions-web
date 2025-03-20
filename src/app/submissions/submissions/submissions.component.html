@@ -1,57 +1,33 @@
 <div class="container">
-  <h1>Submissions</h1>
+  <app-filter-container
+    title="Submissions"
+    [formOptions]="formOptions"
+    [statusOptions]="statusOptions"
+    [selectedForm]="selectedForm"
+    [selectedStatus]="selectedStatus"
+    [selectedDate]="selectedDate"
+    [currentView]="currentView"
+    (filterChange)="onFilterChange($event)"
+    (viewChange)="onViewChange($event)"
+    (exportClick)="exportSubmissions()">
+  </app-filter-container>
 
-  <div class="filter-container">
-    <div class="top-row">
-      <mat-form-field appearance="outline" class="form-select">
-        <mat-select placeholder="Select Form" [(ngModel)]="selectedForm" (ngModelChange)="loadData()">
-          <mat-option *ngFor="let form of formOptions" [value]="form">{{ form }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
+  <app-view-container [currentView]="currentView">
+    <ng-template #mapViewTemplate>
+      <app-map-view 
+        [items]="submissions" 
+        [config]="mapConfig">
+      </app-map-view>
+    </ng-template>
     
-    <div class="middle-row">
-      <div class="search-box">
-        <mat-form-field appearance="outline">
-          <mat-icon matPrefix>search</mat-icon>
-          <input matInput placeholder="Search...">
-        </mat-form-field>
-      </div>
-      
-      <mat-form-field appearance="outline" class="status-select">
-        <mat-select placeholder="Select Status" [(ngModel)]="selectedStatus" (ngModelChange)="loadData()">
-          <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      
-      <div class="controls-container">
-        <div class="map-list-toggle">
-          <button mat-stroked-button [class.active]="currentView === 'map'" (click)="currentView = 'map'; loadData()">
-            <mat-icon>map</mat-icon> Map
-          </button>
-          <button mat-stroked-button [class.active]="currentView === 'list'" (click)="currentView = 'list'; loadData()">
-            <mat-icon>view_list</mat-icon> List
-          </button>
-        </div>
-        
-        <button mat-raised-button class="export-button" (click)="exportSubmissions()">
-          <mat-icon>file_download</mat-icon>
-          Export
-        </button>
-      </div>
-    </div>
-    
-    <div class="bottom-row">
-      <mat-form-field appearance="outline" class="date-select">
-        <input matInput [matDatepicker]="picker" placeholder="Select Date" [(ngModel)]="selectedDate" (ngModelChange)="loadData()">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-    </div>
-  </div>
-
-  <div class="view-container" [ngClass]="{'map-view': currentView === 'map', 'list-view': currentView === 'list'}">
-    <app-map-view *ngIf="currentView === 'map'" [submissions]="submissions"></app-map-view>
-    <app-list-view *ngIf="currentView === 'list'" [submissions]="submissions"></app-list-view>
-  </div>
+    <ng-template #listViewTemplate>
+      <app-list-view 
+        [items]="submissions" 
+        [columns]="listColumns"
+        [pageSizeOptions]="[5, 10, 20]"
+        [showCheckboxes]="true"
+        (selectionChanged)="onSelectionChanged($event)">
+      </app-list-view>
+    </ng-template>
+  </app-view-container>
 </div>

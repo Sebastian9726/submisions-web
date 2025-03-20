@@ -1,0 +1,64 @@
+.map-container {
+  height: 100%;
+  width: 100%;
+}
+
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+/* Custom marker styles */
+:host ::ng-deep {
+  .marker-icon {
+    background: transparent;
+    border: none;
+  }
+
+  .marker-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .status-incomplete, .status-warning {
+    color: #ff9800;
+  }
+
+  .status-success, .status-low-risk {
+    color: #4caf50;
+  }
+
+  .status-error, .status-danger {
+    color: #f44336;
+  }
+
+  .status-info, .status-default {
+    color: #2196F3;
+  }
+
+  .status-review, .status-needs-review {
+    color: #ff9800;
+  }
+
+  .material-icons {
+    font-size: 36px;
+    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
+  }
+
+  .popup-content {
+    padding: 5px;
+    
+    h3 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    
+    p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+  }
+}

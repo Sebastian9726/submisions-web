@@ -1,7 +1,7 @@
 export interface Submission {
   id: string;
   task: string;
-  status: 'Incomplete' | 'Low Risk' | 'Needs Review' | 'Complete';
+  status: 'Incomplete' | 'Low Risk' | 'Needs Review' | 'Complete' | 'Unassigned';
   from: string;
   to: string;
   customerAddress: string;
@@ -16,4 +16,5 @@ export interface SubmissionFilter {
   form?: string;
   status?: string;
   date?: string;
+  search?: string;
 } 

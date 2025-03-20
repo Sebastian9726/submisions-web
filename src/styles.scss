@@ -20,22 +20,23 @@ html, body {
 .header-bar {
   background-color: #2196F3;
   color: white;
-  padding: 0 20px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 56px;
+  height: 64px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
   font-size: 22px;
   font-weight: bold;
+  min-width: 140px;
 }
 
 .menu-items {
   display: flex;
-  gap: 24px;
+  gap: 20px;
 }
 
 .menu-item {
@@ -47,7 +48,10 @@ html, body {
   transition: opacity 0.2s;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+  min-width: 140px;
+  padding: 0 8px;
+  justify-content: center;
   
   mat-icon {
     font-size: 20px;
@@ -80,6 +84,7 @@ html, body {
 
 .header-controls {
   display: flex;
+  justify-content: space-between;
   gap: 8px;
   
   .mat-icon-button {
@@ -87,19 +92,79 @@ html, body {
   }
 }
 
+/* Status styles for reuse across components */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 90px;
+  height: 22px;
+  position: relative;
+  padding-left: 25px;
+  border: 1px solid;
+  letter-spacing: 0.5px;
+  box-sizing: border-box;
+}
+
+.status-badge .status-icon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: absolute;
+  left: 10px;
+}
+
 .status-incomplete {
-  background-color: #ff9800;
-  color: white;
+  background-color: rgba(244, 67, 54, 0.05);
+  color: #d32f2f;
+  border-color: #d32f2f;
+}
+
+.status-incomplete .status-icon {
+  background-color: #d32f2f;
 }
 
 .status-low-risk {
-  background-color: #4caf50;
-  color: white;
+  background-color: rgba(76, 175, 80, 0.05);
+  color: #2e7d32;
+  border-color: #2e7d32;
+}
+
+.status-low-risk .status-icon {
+  background-color: #2e7d32;
 }
 
 .status-needs-review {
-  background-color: #ff9800;
-  color: white;
+  background-color: rgba(255, 152, 0, 0.05);
+  color: #ef6c00;
+  border-color: #ef6c00;
+}
+
+.status-needs-review .status-icon {
+  background-color: #ef6c00;
+}
+
+.status-complete {
+  background-color: rgba(33, 150, 243, 0.05);
+  color: #1976d2;
+  border-color: #1976d2;
+}
+
+.status-complete .status-icon {
+  background-color: #1976d2;
+}
+
+.status-unassigned, .status-default {
+  background-color: rgba(97, 97, 97, 0.05);
+  color: #424242;
+  border-color: #424242;
+}
+
+.status-unassigned .status-icon, .status-default .status-icon {
+  background-color: #424242;
 }
 
 /* Angular Material Customizations */
