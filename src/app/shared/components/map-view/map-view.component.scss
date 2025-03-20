@@ -1,6 +1,158 @@
-.map-container {
+.map-view-container {
+  display: flex;
   height: 100%;
   width: 100%;
+}
+
+.submissions-panel {
+  width: 500px;
+  min-width: 400px;
+  height: 100%;
+  overflow-y: auto;
+  border-right: 1px solid #e0e0e0;
+  background-color: white;
+}
+
+.submissions-list {
+  padding: 10px;
+}
+
+.submission-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  
+  &:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-color: #d0d0d0;
+  }
+  
+  &.active {
+    border-left: 3px solid #2196F3;
+    background-color: rgba(33, 150, 243, 0.05);
+  }
+  
+  h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+.card-content {
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-column {
+  flex: 1;
+}
+
+.status-column {
+  width: 120px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding-top: 5px;
+}
+
+.card-info-row {
+  display: flex;
+  margin-bottom: 5px;
+  
+  .label {
+    color: #555;
+    font-weight: 500;
+    margin-right: 5px;
+    min-width: 70px;
+  }
+  
+  .value {
+    color: #333;
+  }
+}
+
+.status-indicator {
+  margin-top: 0;
+  
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+  }
+}
+
+// Status classes for the badges
+.status-incomplete {
+  background-color: rgba(244, 67, 54, 0.05);
+  color: #d32f2f;
+  border: 1px solid #d32f2f;
+  
+  .status-dot {
+    background-color: #d32f2f;
+  }
+}
+
+.status-low-risk {
+  background-color: rgba(76, 175, 80, 0.05);
+  color: #4caf50;
+  border: 1px solid #4caf50;
+  
+  .status-dot {
+    background-color: #4caf50;
+  }
+}
+
+.status-needs-review {
+  background-color: rgba(255, 152, 0, 0.05);
+  color: #ef6c00;
+  border: 1px solid #ef6c00;
+  
+  .status-dot {
+    background-color: #ef6c00;
+  }
+}
+
+.status-complete {
+  background-color: rgba(33, 150, 243, 0.05);
+  color: #1976d2;
+  border: 1px solid #1976d2;
+  
+  .status-dot {
+    background-color: #1976d2;
+  }
+}
+
+.status-unassigned, .status-default {
+  background-color: rgba(97, 97, 97, 0.05);
+  color: #424242;
+  border: 1px solid #424242;
+  
+  .status-dot {
+    background-color: #424242;
+  }
+}
+
+.map-container {
+  flex: 1;
+  height: 100%;
 }
 
 :host {
@@ -11,54 +163,159 @@
 
 /* Custom marker styles */
 :host ::ng-deep {
-  .marker-icon {
+  .custom-div-icon {
     background: transparent;
     border: none;
   }
 
-  .marker-content {
+  .marker-pin {
+    width: 30px;
+    height: 42px;
     display: flex;
     justify-content: center;
     align-items: center;
+    transform-origin: bottom center;
+    transition: transform 0.2s ease;
+    position: relative;
+    
+    &:hover {
+      transform: scale(1.2);
+    }
+    
+    &:before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-color: white;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      z-index: -1;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    span.material-icons {
+      font-size: 20px;
+      margin-top: -5px;
+    }
   }
 
-  .status-incomplete, .status-warning {
-    color: #ff9800;
+  // Status colors for markers
+  .marker-pin.status-incomplete {
+    color: #d32f2f;
+    &:before {
+      border: 2px solid #d32f2f;
+    }
   }
 
-  .status-success, .status-low-risk {
+  .marker-pin.status-low-risk {
     color: #4caf50;
+    &:before {
+      border: 2px solid #4caf50;
+    }
   }
 
-  .status-error, .status-danger {
-    color: #f44336;
+  .marker-pin.status-needs-review {
+    color: #ef6c00;
+    &:before {
+      border: 2px solid #ef6c00;
+    }
   }
 
-  .status-info, .status-default {
-    color: #2196F3;
+  .marker-pin.status-complete {
+    color: #1976d2;
+    &:before {
+      border: 2px solid #1976d2;
+    }
   }
 
-  .status-review, .status-needs-review {
-    color: #ff9800;
+  .marker-pin.status-unassigned {
+    color: #424242;
+    &:before {
+      border: 2px solid #424242;
+    }
+  }
+
+  // Cluster marker style
+  .custom-cluster-marker {
+    background-color: #1976d2;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100%;
   }
 
   .material-icons {
     font-size: 36px;
-    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5));
+  }
+
+  .leaflet-popup-content-wrapper {
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
   .popup-content {
-    padding: 5px;
+    padding: 8px;
     
     h3 {
       margin: 0 0 10px 0;
       font-size: 16px;
       font-weight: 500;
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
     }
     
     p {
       margin: 5px 0;
       font-size: 14px;
+      
+      strong {
+        font-weight: 500;
+        color: #555;
+      }
     }
+  }
+  
+  /* Marker cluster styles */
+  .marker-cluster {
+    background-color: rgba(33, 150, 243, 0.6);
+    border-radius: 50%;
+    
+    div {
+      background-color: rgba(33, 150, 243, 0.8);
+      color: white;
+      font-weight: bold;
+      border-radius: 50%;
+      width: 80%;
+      height: 80%;
+      margin: 10%;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+    }
+  }
+  
+  .marker-cluster-small {
+    background-color: rgba(33, 150, 243, 0.6);
+  }
+  
+  .marker-cluster-medium {
+    background-color: rgba(33, 150, 243, 0.7);
+  }
+  
+  .marker-cluster-large {
+    background-color: rgba(33, 150, 243, 0.8);
   }
 }

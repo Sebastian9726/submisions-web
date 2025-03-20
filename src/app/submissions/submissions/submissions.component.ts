@@ -108,12 +108,13 @@ export class SubmissionsComponent implements OnInit {
       </div>
     `,
     statusClassGetter: (item: Submission) => {
-      switch (item.status) {
-        case 'Incomplete': return 'incomplete';
-        case 'Low Risk': return 'low-risk';
-        case 'Needs Review': return 'needs-review';
-        default: return 'default';
-      }
+      const status = item.status.toLowerCase();
+      if (status.includes('incomplete')) return 'status-incomplete';
+      if (status.includes('low')) return 'status-low-risk';
+      if (status.includes('needs') || status.includes('review')) return 'status-needs-review';
+      if (status.includes('complete')) return 'status-complete';
+      if (status.includes('unassigned')) return 'status-unassigned';
+      return 'status-default';
     }
   };
 
