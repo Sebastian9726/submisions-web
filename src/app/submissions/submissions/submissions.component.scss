@@ -2,6 +2,8 @@
   padding: 20px;
   max-width: 100%;
   background-color: white;
+  display: flex;
+  flex-direction: column;
 }
 
 h1 {
@@ -94,6 +96,7 @@ mat-form-field {
   overflow: hidden;
   background-color: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  flex: 1;
 }
 
 .map-view {
@@ -102,7 +105,7 @@ mat-form-field {
 
 .list-view {
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 @media (max-width: 768px) {

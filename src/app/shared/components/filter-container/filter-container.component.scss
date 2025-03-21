@@ -4,7 +4,6 @@
   gap: 15px;
   margin-bottom: 20px;
   background-color: white;
-  padding: 20px;
   border-radius: 8px;
 }
 
@@ -27,7 +26,6 @@ h1 {
   margin-bottom: 24px;
   color: #333;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  padding-left: 10px;
 }
 
 .top-row, .middle-row, .bottom-row {
@@ -53,8 +51,8 @@ h1 {
 
 .search-box {
   flex: 1; /* Allows it to grow */
-  min-width: 250px; /* Prevents shrinking too much */
-  max-width: 400px; /* Restricts max width */
+  min-width: 350px; /* Prevents shrinking too much */
+  max-width: 500px; /* Restricts max width */
 }
 
 /* Standardize height for all form fields */

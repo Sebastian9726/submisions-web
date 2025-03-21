@@ -8,8 +8,52 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <!-- Fix for Leaflet in production environment -->
+  <script>
+    // Wait for window load to ensure Leaflet is available
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        // Ensure Leaflet is loaded
+        if (window.L) {
+          console.log('Setting up Leaflet for production');
+          
+          // Fix default icon paths if available
+          try {
+            if (window.L.Icon && window.L.Icon.Default) {
+              var iconDefaults = window.L.Icon.Default.prototype.options;
+              if (iconDefaults) {
+                console.log('Fixing Leaflet icon paths');
+                // Set paths relative to base href
+                var baseHref = document.querySelector('base').href || '/';
+                iconDefaults.imagePath = baseHref + 'assets/';
+              }
+            }
+          } catch (e) {
+            console.warn('Unable to set Leaflet icon paths:', e);
+          }
+          
+          // Define global helper to create cluster group
+          window.createClusterGroup = function(options) {
+            try {
+              // Try to use markerClusterGroup if available
+              if (typeof window.L.markerClusterGroup === 'function') {
+                return window.L.markerClusterGroup(options);
+              }
+              // Otherwise fallback to layer group
+              console.warn('MarkerClusterGroup not available at runtime, using fallback');
+              return window.L.layerGroup();
+            } catch (e) {
+              console.warn('Error with Leaflet cluster group, using fallback:', e);
+              return window.L.layerGroup();
+            }
+          };
+        }
+      }, 500); // Delay to ensure Leaflet is loaded
+    });
+  </script>
 </head>
-<body>
+<body class="mat-typography">
   <app-root></app-root>
 </body>
 </html>

@@ -4,6 +4,22 @@ import { DataItem, LocationData } from '../../models/data-item.model';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 
+// Helper function to create cluster or fallback to layer group
+function createClusterOrLayerGroup(options?: any): L.LayerGroup {
+  try {
+    // Try to use markerClusterGroup if it exists
+    if (typeof L.markerClusterGroup === 'function') {
+      return L.markerClusterGroup(options);
+    }
+    // Fallback to a regular layer group
+    console.warn('MarkerClusterGroup not available, using LayerGroup fallback');
+    return L.layerGroup();
+  } catch (e) {
+    console.warn('Error creating MarkerClusterGroup, using fallback:', e);
+    return L.layerGroup();
+  }
+}
+
 export interface MapMarkerConfig {
   latLngGetter: (item: any) => [number, number];
   popupContentGetter: (item: any) => string;
@@ -54,8 +70,15 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private markerByItem = new Map<any, L.Marker>();
 
   ngAfterViewInit(): void {
-    this.initMap();
-    this.updateMarkers();
+    try {
+      // Log reminder about the custom marker
+      console.log('Make sure to add custom-marker.png to your src/assets/ directory');
+      
+      this.initMap();
+      this.updateMarkers();
+    } catch (error) {
+      console.error('Error initializing map view:', error);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -98,35 +121,41 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   private initMap(): void {
-    if (this.map) {
-      this.map.remove();
-    }
-
-    this.map = L.map(this.mapId, this.mapOptions);
-    
-    // Add tile layer
-    L.tileLayer(this.tileLayerUrl, {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(this.map);
-
-    // Create marker cluster group
-    this.markerClusterGroup = L.markerClusterGroup({
-      showCoverageOnHover: false,
-      zoomToBoundsOnClick: true,
-      spiderfyOnMaxZoom: true,
-      disableClusteringAtZoom: 19,
-      maxClusterRadius: 40,
-      iconCreateFunction: (cluster) => {
-        const count = cluster.getChildCount();
-        return L.divIcon({
-          html: `<div class="cluster-marker">${count}</div>`,
-          className: 'custom-cluster-marker',
-          iconSize: L.point(40, 40)
-        });
+    try {
+      if (this.map) {
+        this.map.remove();
       }
-    });
-    
-    this.map.addLayer(this.markerClusterGroup);
+
+      this.map = L.map(this.mapId, this.mapOptions);
+      
+      // Add tile layer
+      L.tileLayer(this.tileLayerUrl, {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(this.map);
+
+      // Create a cluster group or fallback to layer group
+      this.markerClusterGroup = createClusterOrLayerGroup({
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        spiderfyOnMaxZoom: true,
+        disableClusteringAtZoom: 19,
+        maxClusterRadius: 40,
+        iconCreateFunction: (cluster: any) => {
+          const count = cluster.getChildCount ? cluster.getChildCount() : 0;
+          return L.divIcon({
+            html: `<div class="cluster-marker">${count}</div>`,
+            className: 'custom-cluster-marker',
+            iconSize: L.point(40, 40)
+          });
+        }
+      });
+      
+      if (this.map && this.markerClusterGroup) {
+        this.map.addLayer(this.markerClusterGroup);
+      }
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
   }
 
   private updateMarkers(): void {
@@ -143,6 +172,14 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     // Add markers for all items
     const validMarkers: L.Marker[] = [];
     
+    // Create custom icon once to reuse
+    const customIcon = L.icon({
+      iconUrl: 'assets/custom-marker.png',
+      iconSize: [40, 40],     // size of the icon
+      iconAnchor: [20, 20],   // point of the icon which will correspond to marker's location
+      popupAnchor: [0, -20]   // point from which the popup should open relative to the iconAnchor
+    });
+    
     this.items.forEach(item => {
       try {
         const latLng = this.config.latLngGetter(item);
@@ -153,24 +190,8 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
           return;
         }
         
-        // Create a custom icon if a getter is provided
-        let icon: L.DivIcon | undefined;
-        if (this.config.iconGetter) {
-          icon = this.config.iconGetter(item);
-        } else {
-          // Default icon with status class
-          const statusClass = this.config.statusClassGetter ? 
-            this.config.statusClassGetter(item) : 
-            this.getStatusClass(item['status']);
-            
-          icon = L.divIcon({
-            html: `<div class="marker-pin ${statusClass}"><span class="material-icons">place</span></div>`,
-            className: 'custom-div-icon',
-            iconSize: [30, 42],
-            iconAnchor: [15, 42],
-            popupAnchor: [0, -35]
-          });
-        }
+        // Use custom icon instead of div icons with status classes
+        let icon = customIcon;
         
         // Create marker with popup
         const marker = L.marker(latLng, { icon });

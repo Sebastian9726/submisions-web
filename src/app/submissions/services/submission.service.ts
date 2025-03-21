@@ -57,7 +57,7 @@ export class SubmissionService {
     
     for (let i = 1; i <= count; i++) {
       const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-      const randomWorkFlow = workFlowTypes[Math.floor(Math.random() * workFlowTypes.length)];
+      const randomWorkFlow = 'Work Flow:'+workFlowTypes[Math.floor(Math.random() * workFlowTypes.length)];
       const randomFromEmail = emails[Math.floor(Math.random() * emails.length)];
       const randomToEmail = emails[Math.floor(Math.random() * emails.length)];
       const randomAddress = addresses[Math.floor(Math.random() * addresses.length)];

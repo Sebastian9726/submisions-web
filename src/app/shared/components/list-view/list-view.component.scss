@@ -1,15 +1,24 @@
 .list-container {
-  height: 100%;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-height: 100%;
+  position: relative;
   overflow: hidden;
+}
+
+.table-wrapper {
+  flex: 1 1 auto;
+  overflow: auto;
+  position: relative;
+  max-height: calc(100% - 56px); // Account for paginator height
 }
 
 .data-table {
   width: 100%;
   min-width: 800px;
-  overflow: auto;
-  flex: 1;
+  table-layout: fixed;
 }
 
 mat-table {
@@ -17,36 +26,21 @@ mat-table {
 }
 
 .checkbox-column {
-  width: 48px;
-  padding: 0 8px;
+  width: 60px;
+  min-width: 60px;
   text-align: center;
 }
 
 .data-row {
+  cursor: pointer;
   transition: background-color 0.2s;
   
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
-    
-    td {
-      background-color: rgba(0, 0, 0, 0.04);
-    }
   }
   
   &.selected {
-    background-color: rgba(33, 150, 243, 0.05);
-    
-    td {
-      background-color: rgba(33, 150, 243, 0.05);
-    }
-    
-    &:hover {
-      background-color: rgba(33, 150, 243, 0.1);
-      
-      td {
-        background-color: rgba(33, 150, 243, 0.1);
-      }
-    }
+    background-color: rgba(33, 150, 243, 0.08);
   }
 }
 
@@ -63,10 +57,10 @@ mat-table {
 
 /* No data styling */
 .no-data {
+  padding: 20px;
   text-align: center;
-  padding: 2rem;
+  color: rgba(0, 0, 0, 0.6);
   font-style: italic;
-  color: #757575;
 }
 
 mat-paginator {
@@ -86,4 +80,128 @@ mat-paginator {
 
 ::-webkit-scrollbar-track {
   background-color: #f5f5f5;
+}
+
+/* Make header row sticky */
+tr.mat-mdc-header-row {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #f5f5f5;
+}
+
+/* Ensure table cells don't overflow */
+td.mat-mdc-cell, th.mat-mdc-header-cell {
+  padding: 0 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Add responsive cell widths for common data types */
+th.mat-mdc-header-cell.mat-column-date,
+td.mat-mdc-cell.mat-column-date {
+  width: 120px;
+  min-width: 120px;
+}
+
+th.mat-mdc-header-cell.mat-column-status,
+td.mat-mdc-cell.mat-column-status {
+  width: 100px;
+  min-width: 100px;
+}
+
+th.mat-mdc-header-cell.mat-column-priority,
+td.mat-mdc-cell.mat-column-priority {
+  width: 90px;
+  min-width: 90px;
+}
+
+/* Add some space between table rows */
+tr.mat-mdc-row {
+  height: 48px;
+}
+
+/* Custom paginator styles */
+.custom-paginator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #fafafa;
+  font-size: 14px;
+  height: 56px;
+  flex-shrink: 0; // Prevent paginator from shrinking
+}
+
+.page-info {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 13px;
+}
+
+.page-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.page-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #757575;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  &:hover:not(:disabled) {
+    background-color: #f5f5f5;
+  }
+}
+
+.page-control-arrow {
+  font-size: 10px;
+}
+
+.page-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  
+  &.active {
+    background-color: #2196F3;
+    border-color: #2196F3;
+    color: white;
+    font-weight: 500;
+  }
+  
+  &:hover:not(.active) {
+    background-color: #f5f5f5;
+  }
+}
+
+.page-ellipsis {
+  padding: 0 4px;
+  color: #757575;
+  display: flex;
+  align-items: center;
+  height: 28px;
 }

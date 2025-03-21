@@ -2,7 +2,6 @@ import { Component, Input, OnChanges, SimpleChanges, ViewChild, AfterViewInit, O
 import { CommonModule } from '@angular/common';
 import { DataItem } from '../../models/data-item.model';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -21,7 +20,7 @@ export interface ColumnConfig {
 @Component({
   selector: 'app-list-view',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatCheckboxModule, FormsModule],
+  imports: [CommonModule, MatTableModule, MatSortModule, MatCheckboxModule, FormsModule],
   templateUrl: './list-view.component.html',
   styleUrl: './list-view.component.scss'
 })
@@ -35,13 +34,24 @@ export class ListViewComponent implements OnChanges, AfterViewInit {
   @Input() showCheckboxes: boolean = true;
   
   @Output() selectionChanged = new EventEmitter<DataItem[]>();
+  @Output() pageChanged = new EventEmitter<number>();
   
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  
+  // Custom paginator properties
+  pageIndex: number = 0;
+  totalItems: number = 0;
+  totalPages: number = 0;
+  
+  // Expose Math to the template
+  Math = Math;
   
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<DataItem>([]);
   selection = new SelectionModel<DataItem>(true, []);
+  
+  // Store the original complete dataset
+  private _originalData: DataItem[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['columns'] || changes['showCheckboxes']) {
@@ -49,30 +59,39 @@ export class ListViewComponent implements OnChanges, AfterViewInit {
     }
     
     if (changes['items']) {
-      this.dataSource.data = this.items;
+      // Store the full dataset in a private property
+      this._originalData = [...this.items];
+      
       // Reset selection
       this.selection.clear();
       
-      // Set paginator after data is set
-      if (this.paginator) {
-        this.dataSource.paginator = this.paginator;
-      }
+      // Reset pagination state
+      this.pageIndex = 0;
+      this.totalItems = this._originalData.length;
+      this.totalPages = Math.ceil(this.totalItems / this.pageSize);
       
-      if (this.enableSorting && this.sort) {
-        this.dataSource.sort = this.sort;
-      }
+      // Update page display
+      this.updatePage();
+    }
+    
+    if (changes['pageSize']) {
+      this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+      this.updatePage();
     }
   }
 
   ngAfterViewInit() {
-    // Set paginator after view is initialized
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator;
-    }
-    
     if (this.enableSorting && this.sort) {
       this.dataSource.sort = this.sort;
+      
+      // Connect sort to update pagination
+      this.sort.sortChange.subscribe(() => {
+        this.pageIndex = 0;
+        this.updatePage();
+      });
     }
+    
+    this.updatePage();
   }
 
   updateDisplayedColumns(): void {
@@ -87,19 +106,118 @@ export class ListViewComponent implements OnChanges, AfterViewInit {
     return column.cellClass ? column.cellClass(item) : '';
   }
   
+  // Custom paginator methods
+  getStartIndex(): number {
+    return this.totalItems === 0 ? 0 : (this.pageIndex * this.pageSize) + 1;
+  }
+  
+  getEndIndex(): number {
+    return Math.min((this.pageIndex + 1) * this.pageSize, this.totalItems);
+  }
+  
+  getPageNumbers(): (number | string)[] {
+    const pages: (number | string)[] = [];
+    const totalPages = this.totalPages;
+    
+    if (totalPages <= 7) {
+      // Show all pages if there are 7 or fewer
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+      
+      // Current page is near the start
+      if (this.pageIndex < 3) {
+        pages.push(2, 3, 4, 5, '...', totalPages);
+      } 
+      // Current page is near the end
+      else if (this.pageIndex > totalPages - 5) {
+        pages.push('...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } 
+      // Current page is in the middle
+      else {
+        const current = this.pageIndex + 1;
+        pages.push(
+          '...', 
+          current - 1, 
+          current, 
+          current + 1, 
+          '...', 
+          totalPages
+        );
+      }
+    }
+    
+    return pages;
+  }
+  
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages) {
+      this.pageIndex = page;
+      this.updatePage();
+      this.pageChanged.emit(this.pageIndex);
+    }
+  }
+  
+  nextPage(): void {
+    if (this.pageIndex < this.totalPages - 1) {
+      this.pageIndex++;
+      this.updatePage();
+      this.pageChanged.emit(this.pageIndex);
+    }
+  }
+  
+  previousPage(): void {
+    if (this.pageIndex > 0) {
+      this.pageIndex--;
+      this.updatePage();
+      this.pageChanged.emit(this.pageIndex);
+    }
+  }
+  
+  updatePage(): void {
+    // Calculate pagination info
+    this.totalItems = this._originalData.length;
+    this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+    
+    // Ensure we don't go beyond available pages
+    if (this.pageIndex >= this.totalPages && this.totalPages > 0) {
+      this.pageIndex = this.totalPages - 1;
+    }
+    
+    // Determine start and end indices for current page
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = Math.min(startIndex + this.pageSize, this.totalItems);
+    
+    // Get the current page data and set it to the data source
+    if (this.totalItems > 0) {
+      // Create a slice of the data for the current page
+      const pageData = this._originalData.slice(startIndex, endIndex);
+      this.dataSource.data = pageData;
+      
+      console.log(`Showing page ${this.pageIndex + 1} of ${this.totalPages}, items ${startIndex + 1}-${endIndex} of ${this.totalItems}`);
+    } else {
+      this.dataSource.data = [];
+    }
+  }
+  
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
+    return numSelected === numRows && numRows > 0;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    this.isAllSelected() ?
-        this.selection.clear() :
-        this.dataSource.data.forEach(row => this.selection.select(row));
-        
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
+      this.dataSource.data.forEach(row => this.selection.select(row));
+    }
+    
     this.selectionChanged.emit(this.selection.selected);
   }
 
