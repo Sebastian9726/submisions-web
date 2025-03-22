@@ -3,22 +3,48 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
-  max-height: 100%;
   position: relative;
   overflow: hidden;
+  background: transparent;
 }
 
 .table-wrapper {
   flex: 1 1 auto;
   overflow: auto;
   position: relative;
-  max-height: calc(100% - 56px); // Account for paginator height
+  max-height: calc(100% - 48px);
+  background: transparent; 
 }
 
 .data-table {
   width: 100%;
-  min-width: 800px;
+  min-width: auto;
   table-layout: fixed;
+  border: 1px solid #ccc;
+  border-collapse: separate; 
+  border-spacing: 0; 
+  border-radius: 10px; 
+  overflow: hidden; 
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.data-table th.mat-mdc-header-cell {
+  border-bottom: 1px solid #ccc;
+  &:first-child {
+    border-top-left-radius: 10px;
+  }
+  &:last-child {
+    border-top-right-radius: 10px;
+  }
+}
+
+tr.mat-mdc-row:last-child td.mat-mdc-cell {
+  &:first-child {
+    border-bottom-left-radius: 10px;
+  }
+  &:last-child {
+    border-bottom-right-radius: 10px;
+  }
 }
 
 mat-table {
@@ -26,8 +52,8 @@ mat-table {
 }
 
 .checkbox-column {
-  width: 60px;
-  min-width: 60px;
+  width: 50px;
+  min-width: 50px;
   text-align: center;
 }
 
@@ -87,7 +113,7 @@ tr.mat-mdc-header-row {
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: #f5f5f5;
+  background-color: #fff;
 }
 
 /* Ensure table cells don't overflow */
@@ -120,7 +146,8 @@ td.mat-mdc-cell.mat-column-priority {
 
 /* Add some space between table rows */
 tr.mat-mdc-row {
-  height: 48px;
+  height: 40px;
+  border-bottom: 1px solid #e0e0e0 !important;
 }
 
 /* Custom paginator styles */
@@ -130,10 +157,10 @@ tr.mat-mdc-row {
   align-items: center;
   padding: 12px 16px;
   border-top: 1px solid #e0e0e0;
-  background-color: #fafafa;
+  background-color: #fff;
   font-size: 14px;
   height: 56px;
-  flex-shrink: 0; // Prevent paginator from shrinking
+  flex-shrink: 0; 
 }
 
 .page-info {

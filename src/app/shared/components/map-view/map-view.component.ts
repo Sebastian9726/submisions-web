@@ -74,8 +74,11 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
       // Log reminder about the custom marker
       console.log('Make sure to add custom-marker.png to your src/assets/ directory');
       
-      this.initMap();
-      this.updateMarkers();
+      // Añadir un pequeño retraso para asegurar que el contenedor del mapa esté listo
+      setTimeout(() => {
+        this.initMap();
+        this.updateMarkers();
+      }, 100);
     } catch (error) {
       console.error('Error initializing map view:', error);
     }
@@ -120,42 +123,41 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     return 'status-incomplete';
   }
 
-  private initMap(): void {
-    try {
-      if (this.map) {
-        this.map.remove();
-      }
-
-      this.map = L.map(this.mapId, this.mapOptions);
-      
-      // Add tile layer
-      L.tileLayer(this.tileLayerUrl, {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(this.map);
-
-      // Create a cluster group or fallback to layer group
-      this.markerClusterGroup = createClusterOrLayerGroup({
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true,
-        spiderfyOnMaxZoom: true,
-        disableClusteringAtZoom: 19,
-        maxClusterRadius: 40,
-        iconCreateFunction: (cluster: any) => {
-          const count = cluster.getChildCount ? cluster.getChildCount() : 0;
-          return L.divIcon({
-            html: `<div class="cluster-marker">${count}</div>`,
-            className: 'custom-cluster-marker',
-            iconSize: L.point(40, 40)
-          });
-        }
-      });
-      
-      if (this.map && this.markerClusterGroup) {
-        this.map.addLayer(this.markerClusterGroup);
-      }
-    } catch (error) {
-      console.error('Error initializing map:', error);
+  initMap(): void {
+    // Verificar si el contenedor del mapa existe
+    const mapElement = document.getElementById(this.mapId);
+    if (!mapElement) {
+      console.error(`Map container with ID '${this.mapId}' not found`);
+      return;
     }
+
+    // Asegurar que el contenedor del mapa tenga altura
+    if (mapElement.clientHeight === 0) {
+      console.warn('Map container has zero height. Setting a minimum height.');
+      mapElement.style.height = '500px';
+    }
+
+    // Crear el mapa
+    this.map = L.map(this.mapId, this.mapOptions);
+    
+    // Añadir el tile layer
+    L.tileLayer(this.tileLayerUrl, {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(this.map);
+    
+    // Crear el grupo de marcadores para clustering
+    const clusterOptions = { 
+      maxClusterRadius: window.innerWidth < 768 ? 40 : 60
+    };
+    this.markerClusterGroup = createClusterOrLayerGroup(clusterOptions);
+    this.map.addLayer(this.markerClusterGroup);
+
+    // Invalidar tamaño después de que el mapa se haya creado
+    setTimeout(() => {
+      if (this.map) {
+        this.map.invalidateSize();
+      }
+    }, 300);
   }
 
   private updateMarkers(): void {

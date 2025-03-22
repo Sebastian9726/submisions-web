@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class ViewContainerComponent {
   @Input() currentView: 'map' | 'list' | string = 'list';
-  @Input() viewHeight: string = 'calc(100vh - 300px)';
+  @Input() viewHeight: string = '';
   @Input() customClass: string = '';
   
   @ContentChild('mapViewTemplate') mapViewTemplate?: TemplateRef<any>;

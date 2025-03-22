@@ -1,36 +1,33 @@
 <div class="map-view-container">
     <div class="submissions-panel">
-        <div class="submissions-list">
-            <div *ngFor="let item of items" class="submission-card" [class.active]="selectedItem === item"
-                (click)="selectItem(item)">
-                <div class="card-content">
-                    <div class="info-column">
-                        <h3>{{ item['task'] }}</h3>
-                        <div class="card-info-row">
-                            <span class="label">From:</span>
-                            <span class="value">{{ item['from'] }}</span>
-                        </div>
-                        <div class="card-info-row">
-                            <span class="label">To:</span>
-                            <span class="value">{{ item['to'] }}</span>
-                        </div>
-                        <div class="card-info-row">
-                            <span class="label">Due Date:</span>
-                            <span class="value">{{ item['dueDate'] }}</span>
-                        </div>
+        <div *ngFor="let item of items" class="submission-card" [class.active]="selectedItem === item"
+            (click)="selectItem(item)">
+            <div class="card-content">
+                <div class="info-column">
+                    <h3>{{ item['task'] }}</h3>
+                    <div class="card-info-row">
+                        <span class="label">From:</span>
+                        <span class="value">{{ item['from'] }}</span>
                     </div>
-                    <div class="status-column">
-                        <div class="status-indicator">
-                            <span class="status-badge" [ngClass]="getStatusClass(item['status'])">
-                                <span class="status-dot"></span>
-                                {{ item['status'] }}
-                            </span>
-                        </div>
+                    <div class="card-info-row">
+                        <span class="label">To:</span>
+                        <span class="value">{{ item['to'] }}</span>
+                    </div>
+                    <div class="card-info-row">
+                        <span class="label">Due Date:</span>
+                        <span class="value">{{ item['dueDate'] }}</span>
+                    </div>
+                </div>
+                <div class="status-column">
+                    <div class="status-indicator">
+                        <span class="status-badge" [ngClass]="getStatusClass(item['status'])">
+                            <span class="status-dot"></span>
+                            {{ item['status'] }}
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <div [id]="mapId" class="map-container"></div>
 </div>

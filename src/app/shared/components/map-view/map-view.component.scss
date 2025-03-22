@@ -1,20 +1,18 @@
 .map-view-container {
   display: flex;
-  height: 100%;
+  gap:20px;
   width: 100%;
+  height: 100%;
+  min-height: 500px;
+  border: none;
 }
 
 .submissions-panel {
   width: 500px;
   min-width: 400px;
   height: 100%;
-  overflow-y: auto;
-  border-right: 1px solid #e0e0e0;
+  border-right: none;
   background-color: white;
-}
-
-.submissions-list {
-  padding: 10px;
 }
 
 .submission-card {
@@ -152,12 +150,14 @@
 .map-container {
   flex: 1;
   height: 100%;
+  min-height: 500px;
 }
 
 :host {
   display: block;
   height: 100%;
   width: 100%;
+  min-height: 500px;
 }
 
 /* Custom marker styles */
