@@ -87,9 +87,6 @@ The application provides a comprehensive interface for managing submissions, wit
 
 - **Type Safety**: Extensive use of TypeScript interfaces ensures type safety throughout the application. The design handles the relationship between generic `DataItem` interfaces and specific `Submission` types.
 
-- **Responsive Design**: The application is fully responsive, adapting to different screen sizes with appropriate layouts and interaction patterns.
-
-- **Lazy Loading**: Components are organized to support efficient loading and rendering.
 
 ### Known Limitations
 
