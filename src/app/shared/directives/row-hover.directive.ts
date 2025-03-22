@@ -5,7 +5,7 @@ import { Directive, ElementRef, EventEmitter, HostListener, Input, Output, Rende
   standalone: true
 })
 export class RowHoverDirective {
-  @Input() hoverClass: string = 'row-hovered';
+  @Input() hoverClass = 'row-hovered';
   @Output() rowHoverStart = new EventEmitter<void>();
   @Output() rowHoverEnd = new EventEmitter<void>();
 

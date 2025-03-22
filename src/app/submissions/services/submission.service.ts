@@ -9,7 +9,9 @@ export class SubmissionService {
   private mockSubmissions: Submission[] = this.generateMockData(100);
   private submissionsSubject = new BehaviorSubject<Submission[]>(this.mockSubmissions);
 
-  constructor() {}
+  constructor() {
+    // Initialize service
+  }
 
   /**
    * Generates mock submission data

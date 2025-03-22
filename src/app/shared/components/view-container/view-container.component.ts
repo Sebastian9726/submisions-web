@@ -10,11 +10,11 @@ import { CommonModule } from '@angular/common';
 })
 export class ViewContainerComponent {
   @Input() currentView: 'map' | 'list' | string = 'list';
-  @Input() viewHeight: string = '';
-  @Input() customClass: string = '';
+  @Input() viewHeight = '';
+  @Input() customClass = '';
   
-  @ContentChild('mapViewTemplate') mapViewTemplate?: TemplateRef<any>;
-  @ContentChild('listViewTemplate') listViewTemplate?: TemplateRef<any>;
+  @ContentChild('mapViewTemplate') mapViewTemplate?: TemplateRef<unknown>;
+  @ContentChild('listViewTemplate') listViewTemplate?: TemplateRef<unknown>;
 
   get isMapView(): boolean {
     return this.currentView === 'map';

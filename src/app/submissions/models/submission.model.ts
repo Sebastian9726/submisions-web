@@ -1,4 +1,6 @@
-export interface Submission {
+import { DataItem, LocationData } from '../../shared/models/data-item.model';
+
+export interface Submission extends DataItem {
   id: string;
   task: string;
   status: 'Incomplete' | 'Low Risk' | 'Needs Review' | 'Complete' | 'Unassigned';
@@ -6,10 +8,7 @@ export interface Submission {
   to: string;
   customerAddress: string;
   dueDate: string;
-  location: {
-    lat: number;
-    lng: number;
-  };
+  location: LocationData;
 }
 
 export interface SubmissionFilter {

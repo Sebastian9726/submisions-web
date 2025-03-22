@@ -1,7 +1,12 @@
 <div class="map-view-container">
     <div class="submissions-panel">
         <div *ngFor="let item of items" class="submission-card" [class.active]="selectedItem === item"
-            (click)="selectItem(item)">
+            (click)="selectItem(item)"
+            (keydown.enter)="selectItem(item)"
+            (keydown.space)="selectItem(item); $event.preventDefault()"
+            tabindex="0"
+            role="button"
+            [attr.aria-selected]="selectedItem === item">
             <div class="card-content">
                 <div class="info-column">
                     <h3>{{ item['task'] }}</h3>
@@ -20,7 +25,7 @@
                 </div>
                 <div class="status-column">
                     <div class="status-indicator">
-                        <span class="status-badge" [ngClass]="getStatusClass(item['status'])">
+                        <span class="status-badge" [ngClass]="getStatusClass(item['status'] || '')">
                             <span class="status-dot"></span>
                             {{ item['status'] }}
                         </span>

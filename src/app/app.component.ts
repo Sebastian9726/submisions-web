@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet, NavigationEnd, RouterLink } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd, RouterLink, Event } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { filter } from 'rxjs/operators';
@@ -21,7 +21,7 @@ interface MenuItem {
 })
 export class AppComponent implements OnInit {
   title = 'submissions-web';
-  currentPath: string = '';
+  currentPath = '';
   
   menuItems: MenuItem[] = [
     { path: '/forms', icon: 'description', label: 'Forms', exact: false },
@@ -41,8 +41,10 @@ export class AppComponent implements OnInit {
     // Subscribe to router events to update active menu item
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      this.currentPath = event.url;
+    ).subscribe((event: Event) => {
+      if (event instanceof NavigationEnd) {
+        this.currentPath = event.url;
+      }
     });
   }
 

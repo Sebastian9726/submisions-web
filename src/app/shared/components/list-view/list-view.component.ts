@@ -12,8 +12,8 @@ import { RowHoverDirective } from '../../directives/row-hover.directive';
 export interface ColumnConfig {
   name: string;
   header: string;
-  cell: (item: any) => string;
-  cellClass?: (value: any) => string;
+  cell: (item: DataItem) => string;
+  cellClass?: (value: DataItem) => string;
   width?: string;
   isHtml?: boolean;
 }
@@ -28,11 +28,11 @@ export interface ColumnConfig {
 export class ListViewComponent implements OnChanges, AfterViewInit {
   @Input() items: DataItem[] = [];
   @Input() columns: ColumnConfig[] = [];
-  @Input() pageSize: number = 10;
+  @Input() pageSize = 10;
   @Input() pageSizeOptions: number[] = [5, 10, 20, 50];
-  @Input() showPaginator: boolean = true;
-  @Input() enableSorting: boolean = false;
-  @Input() showCheckboxes: boolean = true;
+  @Input() showPaginator = true;
+  @Input() enableSorting = false;
+  @Input() showCheckboxes = true;
   
   @Output() selectionChanged = new EventEmitter<DataItem[]>();
   @Output() pageChanged = new EventEmitter<number>();
@@ -40,9 +40,9 @@ export class ListViewComponent implements OnChanges, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
   
   // Custom paginator properties
-  pageIndex: number = 0;
-  totalItems: number = 0;
-  totalPages: number = 0;
+  pageIndex = 0;
+  totalItems = 0;
+  totalPages = 0;
   
   // Expose Math to the template
   Math = Math;
@@ -55,7 +55,7 @@ export class ListViewComponent implements OnChanges, AfterViewInit {
   private _originalData: DataItem[] = [];
   
   // Flag to track row hover state
-  rowHovered: any = null;
+  rowHovered: DataItem | null = null;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['columns'] || changes['showCheckboxes']) {
@@ -102,11 +102,11 @@ export class ListViewComponent implements OnChanges, AfterViewInit {
     this.displayedColumns = this.showCheckboxes ? ['select', ...this.columns.map(col => col.name)] : this.columns.map(col => col.name);
   }
 
-  getCellValue(item: any, column: ColumnConfig): string {
+  getCellValue(item: DataItem, column: ColumnConfig): string {
     return column.cell(item);
   }
 
-  getCellClass(item: any, column: ColumnConfig): string {
+  getCellClass(item: DataItem, column: ColumnConfig): string {
     return column.cellClass ? column.cellClass(item) : '';
   }
   
@@ -237,7 +237,7 @@ export class ListViewComponent implements OnChanges, AfterViewInit {
   }
 
   // Methods to handle row hover
-  onRowHover(row: any): void {
+  onRowHover(row: DataItem): void {
     this.rowHovered = row;
   }
   
@@ -246,7 +246,7 @@ export class ListViewComponent implements OnChanges, AfterViewInit {
   }
   
   // Method to check if checkbox should be visible
-  isCheckboxVisible(row: any): boolean {
+  isCheckboxVisible(row: DataItem): boolean {
     return this.rowHovered === row || this.selection.isSelected(row);
   }
 }

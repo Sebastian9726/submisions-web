@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SubmissionService } from '../services/submission.service';
 import { Submission, SubmissionFilter } from '../models/submission.model';
+import { DataItem } from '../../shared/models/data-item.model';
 
 // Angular Material Components
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,7 +21,6 @@ import { ViewContainerComponent } from '../../shared/components/view-container/v
 import { ListViewComponent, ColumnConfig } from '../../shared/components/list-view/list-view.component';
 import { MapViewComponent, MapMarkerConfig } from '../../shared/components/map-view/map-view.component';
 import { CustomDatePipe } from '../../shared/pipes/custom-date.pipe';
-import * as L from 'leaflet';
 
 @Component({
   selector: 'app-submissions',
@@ -66,61 +66,63 @@ export class SubmissionsComponent implements OnInit {
     {
       name: 'workflow',
       header: 'Task',
-      cell: (item: Submission) => item.task
+      cell: (item: DataItem) => (item as Submission).task
     },
     {
       name: 'status',
       header: 'Status',
-      cell: (item: Submission) => this.getStatusBadge(item.status),
+      cell: (item: DataItem) => this.getStatusBadge((item as Submission).status),
       isHtml: true,
       width: '170px'
     },
     {
       name: 'from',
       header: 'From',
-      cell: (item: Submission) => item.from
+      cell: (item: DataItem) => (item as Submission).from
     },
     {
       name: 'to',
       header: 'To',
-      cell: (item: Submission) => item.to
+      cell: (item: DataItem) => (item as Submission).to
     },
     {
       name: 'location',
       header: 'Customer Address',
-      cell: (item: Submission) => item.customerAddress
+      cell: (item: DataItem) => (item as Submission).customerAddress
     },
     {
       name: 'dueDate',
       header: 'Due Date',
-      cell: (item: Submission) => {
+      cell: (item: DataItem) => {
         // Convertimos la fecha de string a objeto Date para aplicar el pipe
-        console.log('Fecha original en dueDate:', item.dueDate);
+        console.log('Fecha original en dueDate:', (item as Submission).dueDate);
         // Usar directamente el string ISO para evitar problemas de zona horaria
-        return this.customDatePipe.transform(item.dueDate);
+        return this.customDatePipe.transform((item as Submission).dueDate);
       }
     }
   ];
   
   // Map view configuration
   mapConfig: MapMarkerConfig = {
-    latLngGetter: (item: Submission) => [item.location.lat, item.location.lng],
-    popupContentGetter: (item: Submission) => {
+    latLngGetter: (item: DataItem) => [(item as Submission).location.lat, (item as Submission).location.lng],
+    popupContentGetter: (item: DataItem) => {
+      const submission = item as Submission;
       // Pasar directamente el string ISO
-      const formattedDate = this.customDatePipe.transform(item.dueDate);
+      const formattedDate = this.customDatePipe.transform(submission.dueDate);
       return `
         <div class="popup-content">
-          <h3>${item.task}</h3>
-          <p><strong>Status:</strong> ${item.status}</p>
-          <p><strong>From:</strong> ${item.from}</p>
-          <p><strong>To:</strong> ${item.to}</p>
-          <p><strong>Address:</strong> ${item.customerAddress}</p>
+          <h3>${submission.task}</h3>
+          <p><strong>Status:</strong> ${submission.status}</p>
+          <p><strong>From:</strong> ${submission.from}</p>
+          <p><strong>To:</strong> ${submission.to}</p>
+          <p><strong>Address:</strong> ${submission.customerAddress}</p>
           <p><strong>Due Date:</strong> ${formattedDate}</p>
         </div>
       `;
     },
-    statusClassGetter: (item: Submission) => {
-      const status = item.status.toLowerCase();
+    statusClassGetter: (item: DataItem) => {
+      const submission = item as Submission;
+      const status = submission.status.toLowerCase();
       if (status.includes('incomplete')) return 'status-incomplete';
       if (status.includes('low')) return 'status-low-risk';
       if (status.includes('needs') || status.includes('review')) return 'status-needs-review';
@@ -191,7 +193,7 @@ export class SubmissionsComponent implements OnInit {
     this.submissionService.exportSubmissions();
   }
   
-  onSelectionChanged(selectedItems: any[]): void {
+  onSelectionChanged(selectedItems: DataItem[]): void {
     console.log('Selected items:', selectedItems);
     // Here you can handle the selected items, for example:
     // - Enable bulk actions

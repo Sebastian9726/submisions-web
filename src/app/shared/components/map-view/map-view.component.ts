@@ -4,8 +4,17 @@ import { DataItem, LocationData } from '../../models/data-item.model';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 
+interface MapClusterOptions {
+  maxClusterRadius?: number;
+  iconCreateFunction?: (cluster: L.MarkerCluster) => L.DivIcon;
+  spiderfyOnMaxZoom?: boolean;
+  showCoverageOnHover?: boolean;
+  zoomToBoundsOnClick?: boolean;
+  disableClusteringAtZoom?: number;
+}
+
 // Helper function to create cluster or fallback to layer group
-function createClusterOrLayerGroup(options?: any): L.LayerGroup {
+function createClusterOrLayerGroup(options?: MapClusterOptions): L.LayerGroup {
   try {
     // Try to use markerClusterGroup if it exists
     if (typeof L.markerClusterGroup === 'function') {
@@ -21,10 +30,10 @@ function createClusterOrLayerGroup(options?: any): L.LayerGroup {
 }
 
 export interface MapMarkerConfig {
-  latLngGetter: (item: any) => [number, number];
-  popupContentGetter: (item: any) => string;
-  iconGetter?: (item: any) => L.DivIcon;
-  statusClassGetter?: (item: any) => string;
+  latLngGetter: (item: DataItem) => [number, number];
+  popupContentGetter: (item: DataItem) => string;
+  iconGetter?: (item: DataItem) => L.DivIcon;
+  statusClassGetter?: (item: DataItem) => string;
 }
 
 @Component({
@@ -37,20 +46,19 @@ export interface MapMarkerConfig {
 export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() items: DataItem[] = [];
   @Input() config: MapMarkerConfig = {
-    latLngGetter: (item: any) => {
-      if (item.location && typeof item.location.lat === 'number' && typeof item.location.lng === 'number') {
-        return [item.location.lat, item.location.lng];
+    latLngGetter: (item: DataItem) => {
+      const location = item['location'] as LocationData | undefined;
+      if (location && typeof location.lat === 'number' && typeof location.lng === 'number') {
+        return [location.lat, location.lng];
       }
       return [0, 0];
     },
-    popupContentGetter: (item: any) => {
+    popupContentGetter: (item: DataItem) => {
       return `<div class="popup-content">
         <h3>${item['task'] || 'Submission'}</h3>
         <p><strong>From:</strong> ${item['from'] || 'N/A'}</p>
         <p><strong>To:</strong> ${item['to'] || 'N/A'}</p>
         <p><strong>Due Date:</strong> ${item['dueDate'] || 'N/A'}</p>
-        <p><strong>Status:</strong> ${item['status'] || 'N/A'}</p>
-        ${item['customerAddress'] ? `<p><strong>Address:</strong> ${item['customerAddress']}</p>` : ''}
       </div>`;
     }
   };
@@ -58,16 +66,16 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     center: [51.5074, -0.1278], // London coordinates
     zoom: 12
   };
-  @Input() tileLayerUrl: string = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  @Input() mapId: string = 'map';
+  @Input() tileLayerUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  @Input() mapId = 'map';
   
   private map?: L.Map;
   private markers: L.Marker[] = [];
-  private markerClusterGroup?: any; // Use 'any' to avoid type issues
+  private markerClusterGroup?: L.LayerGroup;
   
   // Track selected item
-  selectedItem: any = null;
-  private markerByItem = new Map<any, L.Marker>();
+  selectedItem: DataItem | null = null;
+  private markerByItem = new Map<DataItem, L.Marker>();
 
   ngAfterViewInit(): void {
     try {
@@ -95,7 +103,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   /**
    * Selects an item and centers the map on it
    */
-  selectItem(item: any): void {
+  selectItem(item: DataItem): void {
     this.selectedItem = item;
     if (this.map && item) {
       const marker = this.markerByItem.get(item);
@@ -157,7 +165,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   private updateMarkers(): void {
-    if (!this.map || !this.items || !this.markerClusterGroup) {
+    if (!this.map || !this.items) {
       return;
     }
 
@@ -165,7 +173,17 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.markers.forEach(marker => marker.remove());
     this.markers = [];
     this.markerByItem.clear();
-    this.markerClusterGroup.clearLayers();
+    
+    // Reset the marker group
+    if (this.markerClusterGroup) {
+      this.map.removeLayer(this.markerClusterGroup);
+    }
+    
+    const clusterOptions = { 
+      maxClusterRadius: window.innerWidth < 768 ? 40 : 60
+    };
+    this.markerClusterGroup = createClusterOrLayerGroup(clusterOptions);
+    this.map.addLayer(this.markerClusterGroup);
 
     // Add markers for all items
     const validMarkers: L.Marker[] = [];
@@ -189,7 +207,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
         }
         
         // Use custom icon instead of div icons with status classes
-        let icon = customIcon;
+        const icon = customIcon;
         
         // Create marker with popup
         const marker = L.marker(latLng, { icon });
@@ -205,7 +223,9 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
         validMarkers.push(marker);
         
         // Add to cluster group
-        this.markerClusterGroup.addLayer(marker);
+        if (this.markerClusterGroup) {
+          this.markerClusterGroup.addLayer(marker);
+        }
       } catch (error) {
         console.error('Error creating marker for item', item, error);
       }

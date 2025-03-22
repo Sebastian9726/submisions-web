@@ -48,7 +48,7 @@ export interface FilterEvent {
   styleUrl: './filter-container.component.scss'
 })
 export class FilterContainerComponent {
-  @Input() title: string = '';
+  @Input() title = '';
   @Input() config: FilterConfig = {
     showFormSelect: true,
     showStatusSelect: true,
@@ -61,10 +61,10 @@ export class FilterContainerComponent {
   @Input() formOptions: string[] = [];
   @Input() statusOptions: string[] = [];
   
-  @Input() selectedForm: string = '';
-  @Input() selectedStatus: string = '';
+  @Input() selectedForm = '';
+  @Input() selectedStatus = '';
   @Input() selectedDate: Date | null = null;
-  @Input() searchText: string = '';
+  @Input() searchText = '';
   @Input() currentView: 'map' | 'list' = 'map';
   
   @Output() filterChange = new EventEmitter<FilterEvent>();
