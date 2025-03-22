@@ -88,4 +88,9 @@ export class FilterContainerComponent {
   onExportClick(): void {
     this.exportClick.emit();
   }
+  
+  clearDateFilter(): void {
+    this.selectedDate = null;
+    this.onFilterChange();
+  }
 }

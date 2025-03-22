@@ -19,6 +19,7 @@ import { FilterContainerComponent, FilterEvent } from '../../shared/components/f
 import { ViewContainerComponent } from '../../shared/components/view-container/view-container.component';
 import { ListViewComponent, ColumnConfig } from '../../shared/components/list-view/list-view.component';
 import { MapViewComponent, MapMarkerConfig } from '../../shared/components/map-view/map-view.component';
+import { CustomDatePipe } from '../../shared/pipes/custom-date.pipe';
 import * as L from 'leaflet';
 
 @Component({
@@ -40,17 +41,19 @@ import * as L from 'leaflet';
     FilterContainerComponent,
     ViewContainerComponent,
     ListViewComponent,
-    MapViewComponent
+    MapViewComponent,
+    CustomDatePipe
   ]
 })
 export class SubmissionsComponent implements OnInit {
   // Data
   submissions: Submission[] = [];
-  formOptions: string[] = [];
+  fromOptions: string[] = [];
   statusOptions: string[] = [];
+  customDatePipe = new CustomDatePipe();
 
   // Filters
-  selectedForm = '';
+  selectedFrom = '';
   selectedStatus = '';
   selectedDate: Date | null = null;
   searchText = '';
@@ -90,23 +93,32 @@ export class SubmissionsComponent implements OnInit {
     {
       name: 'dueDate',
       header: 'Due Date',
-      cell: (item: Submission) => item.dueDate
+      cell: (item: Submission) => {
+        // Convertimos la fecha de string a objeto Date para aplicar el pipe
+        console.log('Fecha original en dueDate:', item.dueDate);
+        // Usar directamente el string ISO para evitar problemas de zona horaria
+        return this.customDatePipe.transform(item.dueDate);
+      }
     }
   ];
   
   // Map view configuration
   mapConfig: MapMarkerConfig = {
     latLngGetter: (item: Submission) => [item.location.lat, item.location.lng],
-    popupContentGetter: (item: Submission) => `
-      <div class="popup-content">
-        <h3>${item.task}</h3>
-        <p><strong>Status:</strong> ${item.status}</p>
-        <p><strong>From:</strong> ${item.from}</p>
-        <p><strong>To:</strong> ${item.to}</p>
-        <p><strong>Address:</strong> ${item.customerAddress}</p>
-        <p><strong>Due Date:</strong> ${item.dueDate}</p>
-      </div>
-    `,
+    popupContentGetter: (item: Submission) => {
+      // Pasar directamente el string ISO
+      const formattedDate = this.customDatePipe.transform(item.dueDate);
+      return `
+        <div class="popup-content">
+          <h3>${item.task}</h3>
+          <p><strong>Status:</strong> ${item.status}</p>
+          <p><strong>From:</strong> ${item.from}</p>
+          <p><strong>To:</strong> ${item.to}</p>
+          <p><strong>Address:</strong> ${item.customerAddress}</p>
+          <p><strong>Due Date:</strong> ${formattedDate}</p>
+        </div>
+      `;
+    },
     statusClassGetter: (item: Submission) => {
       const status = item.status.toLowerCase();
       if (status.includes('incomplete')) return 'status-incomplete';
@@ -122,13 +134,13 @@ export class SubmissionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
-    this.formOptions = this.submissionService.getFormOptions();
+    this.fromOptions = this.submissionService.getFromOptions();
     this.statusOptions = this.submissionService.getStatusOptions();
   }
 
   onFilterChange(event: FilterEvent): void {
     if (event.formValue !== undefined) {
-      this.selectedForm = event.formValue;
+      this.selectedFrom = event.formValue;
     }
     
     if (event.statusValue !== undefined) {
@@ -154,8 +166,8 @@ export class SubmissionsComponent implements OnInit {
   loadData(): void {
     const filters: SubmissionFilter = {};
     
-    if (this.selectedForm && this.selectedForm !== 'All Forms') {
-      filters.form = this.selectedForm;
+    if (this.selectedFrom && this.selectedFrom !== 'All Emails') {
+      filters.from = this.selectedFrom;
     }
     
     if (this.selectedStatus && this.selectedStatus !== 'All Status') {
@@ -163,8 +175,7 @@ export class SubmissionsComponent implements OnInit {
     }
     
     if (this.selectedDate) {
-      const date = new Date(this.selectedDate);
-      filters.date = date.toLocaleDateString();
+      filters.date = this.selectedDate;
     }
     
     if (this.searchText) {

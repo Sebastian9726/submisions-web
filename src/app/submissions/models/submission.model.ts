@@ -13,8 +13,8 @@ export interface Submission {
 }
 
 export interface SubmissionFilter {
-  form?: string;
+  from?: string;
   status?: string;
-  date?: string;
+  date?: string | Date;
   search?: string;
 } 

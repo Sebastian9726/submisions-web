@@ -46,10 +46,9 @@ export class SubmissionService {
       '654 Bond Street, London, UK'
     ];
     
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
+    // Definir el rango de fechas desde el 1 de enero de 2022 hasta hoy
+    const startDate = new Date(2022, 0, 1);  // 1 de enero de 2022
+    const endDate = new Date();  // Fecha actual
     
     // Base coordinates for London
     const baseLat = 51.5;
@@ -61,8 +60,27 @@ export class SubmissionService {
       const randomFromEmail = emails[Math.floor(Math.random() * emails.length)];
       const randomToEmail = emails[Math.floor(Math.random() * emails.length)];
       const randomAddress = addresses[Math.floor(Math.random() * addresses.length)];
-      const randomDay = Math.floor(Math.random() * 28) + 1;
-      const randomMonth = months[Math.floor(Math.random() * months.length)];
+      
+      // Generar una fecha aleatoria entre startDate y endDate
+      const randomTimestamp = startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime());
+      const randomDate = new Date(randomTimestamp);
+      
+      // Añadir hora aleatoria (para que tenga sentido con el formato "Oct 6, 02:38 AM")
+      randomDate.setHours(Math.floor(Math.random() * 24));
+      randomDate.setMinutes(Math.floor(Math.random() * 60));
+      
+      // Imprimir la fecha para depuración
+      console.log('Generando fecha con hora:', 
+        randomDate.getFullYear(), 
+        randomDate.getMonth() + 1, 
+        randomDate.getDate(), 
+        randomDate.getHours(), 
+        randomDate.getMinutes()
+      );
+      
+      // Formatear fecha como valor ISO para una fácil conversión posterior
+      const formattedDate = randomDate.toISOString();
+      console.log('Fecha ISO generada:', formattedDate);
       
       // Generate coordinates with small random offsets for visual distribution on map
       const latOffset = (Math.random() - 0.5) * 0.1;
@@ -75,7 +93,7 @@ export class SubmissionService {
         from: randomFromEmail,
         to: randomToEmail,
         customerAddress: randomAddress,
-        dueDate: `${randomDay < 10 ? '0' + randomDay : randomDay} ${randomMonth}`,
+        dueDate: formattedDate,
         location: {
           lat: baseLat + latOffset,
           lng: baseLng + lngOffset
@@ -92,7 +110,7 @@ export class SubmissionService {
       const filteredSubmissions = this.mockSubmissions.filter(submission => {
         let match = true;
         
-        if (filters.form && submission.task !== filters.form) {
+        if (filters.from && submission.from !== filters.from) {
           match = false;
         }
         
@@ -100,8 +118,29 @@ export class SubmissionService {
           match = false;
         }
         
-        if (filters.date && submission.dueDate !== filters.date) {
-          match = false;
+        if (filters.date) {
+          // Convertir la fecha del filtro a formato de fecha sin hora
+          let filterDate: Date;
+          if (typeof filters.date === 'string') {
+            filterDate = new Date(filters.date);
+          } else {
+            filterDate = new Date(filters.date);
+          }
+          
+          // Establecer la hora a 00:00:00 para comparar solo fechas
+          filterDate.setHours(0, 0, 0, 0);
+          
+          // Convertir la fecha del submission a Date
+          const submissionDate = new Date(submission.dueDate);
+          
+          // Comparar si la fecha del submission es ANTERIOR a la fecha del filtro
+          // (queremos mostrar desde la fecha del filtro en adelante)
+          if (submissionDate < filterDate) {
+            match = false;
+          }
+          
+          // Nota: No necesitamos comprobar si es posterior a hoy,
+          // ya que todos los registros son de fechas pasadas o presentes
         }
         
         if (filters.search) {
@@ -112,7 +151,7 @@ export class SubmissionService {
             submission.from.toLowerCase().includes(searchText) ||
             submission.to.toLowerCase().includes(searchText) ||
             submission.customerAddress.toLowerCase().includes(searchText) ||
-            submission.dueDate.toLowerCase().includes(searchText);
+            new Date(submission.dueDate).toLocaleString().toLowerCase().includes(searchText);
           
           if (!searchMatch) {
             match = false;
@@ -133,8 +172,10 @@ export class SubmissionService {
     alert('Submissions exported successfully');
   }
 
-  getFormOptions(): string[] {
-    return ['All Forms', 'Requires Location', 'Customer Survey', 'Site Inspection', 'Delivery Confirmation', 'Maintenance Request'];
+  getFromOptions(): string[] {
+    // Obtener emails únicos de los datos para el filtro
+    const uniqueEmails = Array.from(new Set(this.mockSubmissions.map(sub => sub.from)));
+    return ['All Emails', ...uniqueEmails];
   }
 
   getStatusOptions(): string[] {

@@ -10,7 +10,7 @@
         </mat-form-field>
       </div>
       <mat-form-field appearance="outline" class="form-select" *ngIf="config.showFormSelect">
-        <mat-select placeholder="Select Form" [(ngModel)]="selectedForm" (ngModelChange)="onFilterChange()">
+        <mat-select placeholder="Select From" [(ngModel)]="selectedForm" (ngModelChange)="onFilterChange()">
           <mat-option *ngFor="let form of formOptions" [value]="form">{{ form }}</mat-option>
         </mat-select>
       </mat-form-field>
