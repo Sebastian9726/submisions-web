@@ -71,10 +71,6 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   ngAfterViewInit(): void {
     try {
-      // Log reminder about the custom marker
-      console.log('Make sure to add custom-marker.png to your src/assets/ directory');
-      
-      // Añadir un pequeño retraso para asegurar que el contenedor del mapa esté listo
       setTimeout(() => {
         this.initMap();
         this.updateMarkers();

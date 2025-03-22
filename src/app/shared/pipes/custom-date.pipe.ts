@@ -17,18 +17,13 @@ export class CustomDatePipe implements PipeTransform {
       if (typeof value === 'string') {
         // Para strings ISO, parseamos manualmente para asegurar que la hora se mantiene
         date = new Date(value);
-        console.log('Fecha original (string):', value);
-        console.log('Fecha convertida:', date);
-        console.log('Hora de la fecha:', date.getHours(), date.getMinutes());
       } else {
         date = value;
-        console.log('Fecha original (objeto):', date);
-        console.log('Hora de la fecha:', date.getHours(), date.getMinutes());
       }
       
       // Comprobar si la fecha es válida
       if (isNaN(date.getTime())) {
-        console.error('Fecha inválida:', value);
+        console.error('Invalid date:', value);
         return String(value);
       }
 
@@ -43,10 +38,9 @@ export class CustomDatePipe implements PipeTransform {
       };
 
       const formatted = date.toLocaleString('en-US', options);
-      console.log('Fecha formateada:', formatted);
       return formatted;
     } catch (error) {
-      console.error('Error al formatear fecha:', error, value);
+      console.error('Error formatted:', error, value);
       return String(value);
     }
   }

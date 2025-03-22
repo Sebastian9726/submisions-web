@@ -61,28 +61,14 @@ export class SubmissionService {
       const randomToEmail = emails[Math.floor(Math.random() * emails.length)];
       const randomAddress = addresses[Math.floor(Math.random() * addresses.length)];
       
-      // Generar una fecha aleatoria entre startDate y endDate
       const randomTimestamp = startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime());
       const randomDate = new Date(randomTimestamp);
       
-      // Añadir hora aleatoria (para que tenga sentido con el formato "Oct 6, 02:38 AM")
       randomDate.setHours(Math.floor(Math.random() * 24));
       randomDate.setMinutes(Math.floor(Math.random() * 60));
-      
-      // Imprimir la fecha para depuración
-      console.log('Generando fecha con hora:', 
-        randomDate.getFullYear(), 
-        randomDate.getMonth() + 1, 
-        randomDate.getDate(), 
-        randomDate.getHours(), 
-        randomDate.getMinutes()
-      );
-      
-      // Formatear fecha como valor ISO para una fácil conversión posterior
+            
       const formattedDate = randomDate.toISOString();
-      console.log('Fecha ISO generada:', formattedDate);
       
-      // Generate coordinates with small random offsets for visual distribution on map
       const latOffset = (Math.random() - 0.5) * 0.1;
       const lngOffset = (Math.random() - 0.5) * 0.1;
       

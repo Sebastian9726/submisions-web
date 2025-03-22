@@ -1,30 +1,13 @@
 <header class="header-bar">
   <div class="logo">ZenduForms</div>
   <nav class="menu-items">
-    <a href="#" class="menu-item">
-      <mat-icon>description</mat-icon>
-      Forms
-    </a>
-    <a href="#" class="menu-item">
-      <mat-icon>people</mat-icon>
-      Customers
-    </a>
-    <a href="#" class="menu-item active">
-      <mat-icon>send</mat-icon>
-      Submissions
-    </a>
-    <a href="#" class="menu-item">
-      <mat-icon>history</mat-icon>
-      History
-    </a>
-    <a href="#" class="menu-item">
-      <mat-icon>bar_chart</mat-icon>
-      Reports
-    </a>
-    <a href="#" class="menu-item">
-      <mat-icon>assignment</mat-icon>
-      Workflow
-    </a>
+    <div *ngFor="let item of menuItems" 
+       [routerLink]="item.path" 
+       class="menu-item" 
+       [class.active]="isActive(item.path, item.exact)">
+      <mat-icon>{{item.icon}}</mat-icon>
+      {{item.label}}
+    </div>
   </nav>
   <div class="header-controls">
     <button mat-icon-button class="notification-btn">

@@ -200,8 +200,6 @@ export class ListViewComponent implements OnChanges, AfterViewInit {
       // Create a slice of the data for the current page
       const pageData = this._originalData.slice(startIndex, endIndex);
       this.dataSource.data = pageData;
-      
-      console.log(`Showing page ${this.pageIndex + 1} of ${this.totalPages}, items ${startIndex + 1}-${endIndex} of ${this.totalItems}`);
     } else {
       this.dataSource.data = [];
     }

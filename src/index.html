@@ -16,14 +16,11 @@
       setTimeout(function() {
         // Ensure Leaflet is loaded
         if (window.L) {
-          console.log('Setting up Leaflet for production');
-          
           // Fix default icon paths if available
           try {
             if (window.L.Icon && window.L.Icon.Default) {
               var iconDefaults = window.L.Icon.Default.prototype.options;
               if (iconDefaults) {
-                console.log('Fixing Leaflet icon paths');
                 // Set paths relative to base href
                 var baseHref = document.querySelector('base').href || '/';
                 iconDefaults.imagePath = baseHref + 'assets/';
