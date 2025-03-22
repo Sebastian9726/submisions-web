@@ -55,11 +55,21 @@ mat-table {
   width: 50px;
   min-width: 50px;
   text-align: center;
+  
+  mat-checkbox {
+    transition: visibility 0s, opacity 0.05s;
+    &[style*="hidden"] {
+      opacity: 0;
+    }
+    &[style*="visible"] {
+      opacity: 1;
+    }
+  }
 }
 
 .data-row {
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.05s;
   
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);

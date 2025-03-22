@@ -7,6 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
+import { RowHoverDirective } from '../../directives/row-hover.directive';
 
 export interface ColumnConfig {
   name: string;
@@ -20,7 +21,7 @@ export interface ColumnConfig {
 @Component({
   selector: 'app-list-view',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatSortModule, MatCheckboxModule, FormsModule],
+  imports: [CommonModule, MatTableModule, MatSortModule, MatCheckboxModule, FormsModule, RowHoverDirective],
   templateUrl: './list-view.component.html',
   styleUrl: './list-view.component.scss'
 })
@@ -52,6 +53,9 @@ export class ListViewComponent implements OnChanges, AfterViewInit {
   
   // Store the original complete dataset
   private _originalData: DataItem[] = [];
+  
+  // Flag to track row hover state
+  rowHovered: any = null;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['columns'] || changes['showCheckboxes']) {
@@ -232,5 +236,19 @@ export class ListViewComponent implements OnChanges, AfterViewInit {
   /** Handle row selection change */
   onSelectionChange() {
     this.selectionChanged.emit(this.selection.selected);
+  }
+
+  // Methods to handle row hover
+  onRowHover(row: any): void {
+    this.rowHovered = row;
+  }
+  
+  onRowLeave(): void {
+    this.rowHovered = null;
+  }
+  
+  // Method to check if checkbox should be visible
+  isCheckboxVisible(row: any): boolean {
+    return this.rowHovered === row || this.selection.isSelected(row);
   }
 }

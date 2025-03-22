@@ -12,7 +12,8 @@
         <td mat-cell *matCellDef="let row" class="checkbox-column">
           <mat-checkbox (click)="$event.stopPropagation()"
             (change)="$event ? selection.toggle(row) : null; onSelectionChange()" [checked]="selection.isSelected(row)"
-            [aria-label]="checkboxLabel(row)">
+            [aria-label]="checkboxLabel(row)"
+            [style.visibility]="isCheckboxVisible(row) ? 'visible' : 'hidden'">
           </mat-checkbox>
         </td>
       </ng-container>
@@ -34,7 +35,10 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="data-row"
-        [class.selected]="selection.isSelected(row)">
+        [class.selected]="selection.isSelected(row)"
+        appRowHover
+        (rowHoverStart)="onRowHover(row)"
+        (rowHoverEnd)="onRowLeave()">
       </tr>
 
       <!-- No data row -->

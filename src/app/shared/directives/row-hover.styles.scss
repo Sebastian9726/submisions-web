@@ -1,0 +1,14 @@
+.row-hovered {
+  background-color: rgba(0, 0, 0, 0.04);
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+table tr.row-hovered {
+  background-color: rgba(63, 81, 181, 0.08);
+}
+
+.mat-list-item.row-hovered, 
+.list-item.row-hovered {
+  background-color: rgba(63, 81, 181, 0.08);
+} 
